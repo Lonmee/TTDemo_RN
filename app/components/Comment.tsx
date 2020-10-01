@@ -7,6 +7,7 @@ import {
   View,
   StyleSheet,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {toggleComment} from '../actions';
 import Modal from 'react-native-modal';
@@ -50,9 +51,10 @@ export default connect(
       ],
     ];
     private commentContent: string = '';
-
+    state = {inputting: true};
     render() {
-      const {isModalVisible, toggleComment, currentVideoIndex} = this.props;
+      const {isModalVisible, toggleComment, currentVideoIndex} = this.props,
+        {inputting} = this.state;
       return (
         <Modal
           style={styles.view}
@@ -68,28 +70,36 @@ export default connect(
               backgroundColor: '#999',
             }}>
             <FlatList
+              style={{flex: 1}}
               data={this.mockData[currentVideoIndex % 3]}
               keyExtractor={(item, index) => index.toString()}
               contentContainerStyle={{paddingTop: 40, alignItems: 'center'}}
-              renderItem={(info) => <CommentItem data={info.item} />}
+              renderItem={(info) => (
+                <CommentItem
+                  data={info.item}
+                  onFocus={() => this.setState({inputting: true})}
+                />
+              )}
             />
-            <KeyboardAvoidingView style={styles.container}>
-              <TextInput
-                style={styles.textInputStyle}
-                onChangeText={(text) => (this.commentContent = text)}
-              />
-              <Button
-                title="Send"
-                color={'white'}
-                onPress={() => {
-                  this.mockData[currentVideoIndex % 3].push(
-                    this.commentContent,
-                  );
-                  this.commentContent = '';
-                  toggleComment();
-                }}
-              />
-            </KeyboardAvoidingView>
+            {inputting && (
+              <KeyboardAvoidingView style={styles.container}>
+                <TextInput
+                  style={styles.textInputStyle}
+                  onChangeText={(text) => (this.commentContent = text)}
+                />
+                <Button
+                  title="Send"
+                  color={'white'}
+                  onPress={() => {
+                    this.mockData[currentVideoIndex % 3].push(
+                      this.commentContent,
+                    );
+                    this.commentContent = '';
+                    toggleComment();
+                  }}
+                />
+              </KeyboardAvoidingView>
+            )}
             <View style={{position: 'absolute', right: 4, top: 2}}>
               <Button title="X" onPress={() => toggleComment()} />
             </View>
@@ -102,7 +112,7 @@ export default connect(
 
 class CommentItem extends PureComponent<any> {
   render() {
-    const {data} = this.props;
+    const {data, onFocus} = this.props;
     return (
       <View
         style={{
@@ -126,7 +136,7 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   container: {
-    flex: 1,
+    height: 60,
     width: frameWidth,
     flexDirection: 'row',
     justifyContent: 'space-evenly',
