@@ -12,7 +12,7 @@ const initialState = {
     name: 'default',
   },
   comment: {
-    isModalVisible: true,
+    isModalVisible: false,
   },
 };
 
