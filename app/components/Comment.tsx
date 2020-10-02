@@ -51,7 +51,7 @@ export default connect(
       ],
     ];
     private commentContent: string = '';
-    state = {inputting: true};
+    state = {inputting: true}; // hide optional
     render() {
       const {isModalVisible, toggleComment, currentVideoIndex} = this.props,
         {inputting} = this.state;
@@ -114,19 +114,21 @@ class CommentItem extends PureComponent<any> {
   render() {
     const {data, onFocus} = this.props;
     return (
-      <View
-        style={{
-          paddingTop: 10,
-          width: frameWidth * 0.8,
-          justifyContent: 'flex-start',
-          flexDirection: 'row',
-        }}>
-        <View style={{flexDirection: 'column', paddingRight: 10}}>
-          <Text style={{color: '#00dd00', fontSize: 12}}>Icon</Text>
-          <Text style={{color: '#00dd00', fontSize: 12}}>Icon</Text>
+      <TouchableWithoutFeedback onPress={onFocus}>
+        <View
+          style={{
+            paddingTop: 10,
+            width: frameWidth * 0.8,
+            justifyContent: 'flex-start',
+            flexDirection: 'row',
+          }}>
+          <View style={{flexDirection: 'column', paddingRight: 10}}>
+            <Text style={{color: '#00dd00', fontSize: 12}}>Icon</Text>
+            <Text style={{color: '#00dd00', fontSize: 12}}>Icon</Text>
+          </View>
+          <Text style={{fontSize: 22}}>{data}</Text>
         </View>
-        <Text style={{fontSize: 22}}>{data}</Text>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
