@@ -147,7 +147,7 @@ class VideoItem extends PureComponent<any> {
             position: 'absolute',
             bottom: 200,
             right: -10,
-            transform: [{rotateZ: '-1.55'}],
+            transform: [{rotateZ: '-90deg'}],
           }}>
           <Button title={'Comment'} onPress={() => toggleComment()} />
         </View>
