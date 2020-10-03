@@ -30,6 +30,7 @@ export default connect(
   d2p,
 )(
   class Comment extends Component<any, any> {
+    state = {inputting: true}; // hide optional
     private mockData = [
       [
         'Comment of video0',
@@ -51,7 +52,15 @@ export default connect(
       ],
     ];
     private commentContent: string = '';
-    state = {inputting: true}; // hide optional
+    private tf: any;
+    private submitAndClear() {
+      this.commentContent == '' ||
+        this.mockData[this.props.currentVideoIndex % 3].unshift(
+          this.commentContent,
+        );
+      this.commentContent = '';
+      this.tf.clear();
+    }
     render() {
       const {isModalVisible, toggleComment, currentVideoIndex} = this.props,
         {inputting} = this.state;
@@ -63,7 +72,8 @@ export default connect(
           deviceHeight={frameHeight}
           backdropOpacity={0}
           avoidKeyboard={true}
-          onBackButtonPress={() => toggleComment()}>
+          onBackButtonPress={() => toggleComment()}
+          onBackdropPress={() => toggleComment()}>
           <View
             style={{
               flex: 0.6,
@@ -71,7 +81,7 @@ export default connect(
             }}>
             <FlatList
               style={{flex: 1}}
-              data={this.mockData[currentVideoIndex % 3]}
+              data={this.mockData[currentVideoIndex % 3].reverse()}
               keyExtractor={(item, index) => index.toString()}
               contentContainerStyle={{paddingTop: 40, alignItems: 'center'}}
               renderItem={(info) => (
@@ -84,18 +94,20 @@ export default connect(
             {inputting && (
               <KeyboardAvoidingView style={styles.container}>
                 <TextInput
+                  ref={(ref) => (this.tf = ref)}
                   style={styles.textInputStyle}
+                  blurOnSubmit={true}
                   onChangeText={(text) => (this.commentContent = text)}
+                  onSubmitEditing={() => {
+                    this.submitAndClear();
+                  }}
                 />
                 <Button
                   title="Send"
                   color={'white'}
                   onPress={() => {
-                    this.mockData[currentVideoIndex % 3].push(
-                      this.commentContent,
-                    );
-                    this.commentContent = '';
-                    toggleComment();
+                    this.submitAndClear();
+                    this.tf.blur();
                   }}
                 />
               </KeyboardAvoidingView>
